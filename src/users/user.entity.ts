@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn ,Column} from "typeorm";
+import { Entity, PrimaryGeneratedColumn ,Column, BeforeInsert} from "typeorm";
+import { hash } from "bcrypt";
 
 @Entity({name: 'users'})
 export class User {
@@ -7,25 +8,25 @@ export class User {
         id : number;
 
         @Column()
-        name :String;
+        name :string;
 
         @Column()
-        lastname : String; 
+        lastname : string; 
 
         @Column({unique:true})
-        email : String;
+        email : string;
 
         @Column({unique:true})
-        phone : String;
+        phone : string;
 
         @Column({nullable:true})
-        image : String;
+        image : string;
 
         @Column()
-        password: String;
+        password: string;
 
         @Column({nullable:true})
-        notification_token: String;
+        notification_token: string;
 
   
         @Column({type:'datetime',default:()=>'CURRENT_TIMESTAMP'})
@@ -33,6 +34,13 @@ export class User {
 
         @Column({type:'datetime',default:()=>'CURRENT_TIMESTAMP'})
         updated_at : Date	;	
+
+
+        //Criptogrsfia de senha 
+        @BeforeInsert()
+        async hashPassword(){
+            this.password = await hash(this.password,Number(process.env.HASH_SALT));
+        }
     
 }
 

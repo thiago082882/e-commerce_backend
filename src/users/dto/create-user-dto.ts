@@ -1,11 +1,11 @@
 export class CreateUserDto{
 
-    name :String;
-    lastname : String; 
-    email : String;
-    phone : String;
-    image? : String;
-    password: String;
-    notification_token: String;
+    name :string;
+    lastname : string; 
+    email : string;
+    phone : string;
+    image? : string;
+    password: string;
+    notification_token: string;
 
 }
