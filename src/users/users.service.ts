@@ -34,9 +34,24 @@ export class UsersService {
             return this.userRepository.save(updateUser)
 
     }
-    async updateWithImage(file:Express.Multer.File){
+    async updateWithImage(file:Express.Multer.File,id: number,user:UpdateUserDto){
         const url = await storage(file,file.originalname);
-        console.log('URL'+url)
+        console.log('URL'+url);
+        if(url === undefined && url === null){
+            return new HttpException('A imagem não pode ser salva',HttpStatus.INTERNAL_SERVER_ERROR);
+        
+        }
+
+        const userFound= await this.userRepository.findOneBy({id:id});
+            
+        if(!userFound){
+
+            return new HttpException('Usuario não existe',HttpStatus.NOT_FOUND);
+        }
+        user.image = url;
+
+        const updateUser = Object.assign(userFound,user);
+        return this.userRepository.save(updateUser)
     }
 
   
