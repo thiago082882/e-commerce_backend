@@ -5,12 +5,15 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user-dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import  storage = require('../utils/cloud_storage');
+import { Rol } from 'src/roles/rol.entity';
 
 
 @Injectable()
 export class UsersService {
 
-    constructor(@InjectRepository(User) private userRepository : Repository<User>){}
+    constructor(@InjectRepository(User) private userRepository : Repository<User>
+            
+    ){}
 
     create(user: CreateUserDto){
 
@@ -19,7 +22,7 @@ export class UsersService {
     }
 
     findAll(){
-        return this.userRepository.find()
+        return this.userRepository.find({relations:['roles']});
     }
     async update(id: number,user:UpdateUserDto){
 
@@ -27,18 +30,19 @@ export class UsersService {
             
             if(!userFound){
 
-                return new HttpException('Usuario não existe',HttpStatus.NOT_FOUND);
+                throw new HttpException('Usuario não existe',HttpStatus.NOT_FOUND);
             }
 
             const updateUser = Object.assign(userFound,user);
             return this.userRepository.save(updateUser)
 
     }
+    
     async updateWithImage(file:Express.Multer.File,id: number,user:UpdateUserDto){
         const url = await storage(file,file.originalname);
         console.log('URL'+url);
         if(url === undefined && url === null){
-            return new HttpException('A imagem não pode ser salva',HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new HttpException('A imagem não pode ser salva',HttpStatus.INTERNAL_SERVER_ERROR);
         
         }
 
@@ -46,7 +50,7 @@ export class UsersService {
             
         if(!userFound){
 
-            return new HttpException('Usuario não existe',HttpStatus.NOT_FOUND);
+            throw new HttpException('Usuario não existe',HttpStatus.NOT_FOUND);
         }
         user.image = url;
 

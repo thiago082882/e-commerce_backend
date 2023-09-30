@@ -25,4 +25,6 @@ export class RegisterUserDto{
     @MinLength(6,{message:'A senha deverá ter pelo menos 6 caracteres'})
     password: string;
 
+    rolesIds : string[];
+
 }
