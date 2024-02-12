@@ -3,26 +3,30 @@ import { Column, Entity, JoinColumn, JoinTable, ManyToOne, PrimaryGeneratedColum
 
 
 @Entity({name:'products'})
-export class product{
+export class Product{
 
     @PrimaryGeneratedColumn()
-    id:String;
+    id:number;
 
     @Column()
-    name:String;
+    name:string;
 
     
     @Column()
-    description:String;
+    description:string;
+
+    @Column({nullable:true})
+    image1:string;
+
+   
+    @Column({nullable:true})
+    image2:string;
 
     @Column()
-    image1:String;
+    id_category:number;
 
     @Column()
-    image2:String;
-
-    @Column()
-    price:Number;
+    price:number;
 
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
     created_at: Date;
