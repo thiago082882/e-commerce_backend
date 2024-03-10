@@ -16,11 +16,11 @@ export class Product{
     description:string;
 
     @Column({nullable:true})
-    image1:string;
+    image1?:string;
 
    
     @Column({nullable:true})
-    image2:string;
+    image2?:string;
 
     @Column()
     id_category:number;
