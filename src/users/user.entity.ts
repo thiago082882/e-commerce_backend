@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn ,Column, BeforeInsert, ManyToMany, JoinTable} from "typeorm";
+import { Entity, PrimaryGeneratedColumn ,Column, BeforeInsert, ManyToMany, JoinTable, OneToMany} from "typeorm";
 import { hash } from "bcrypt";
 import { Rol } from "src/roles/rol.entity";
+import { Address } from "src/address/address.entity";
 
 
 @Entity({name: 'users'})
@@ -51,6 +52,9 @@ export class User {
                        // Muitos pra muitos -> relação 
             @ManyToMany(() => Rol, (rol) => rol.users)
             roles: Rol[];
+
+            @OneToMany(()=>Address,address =>address.address)
+            address:Address;
 
         //Criptogrsfia de senha 
         @BeforeInsert()
