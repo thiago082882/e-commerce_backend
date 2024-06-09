@@ -8,6 +8,7 @@ import { RolesModule } from './roles/roles.module';
 import { CategoriesModule } from './categories/categories.module';
 import { ProductsModule } from './products/products.module';
 import { AddressModule } from './address/address.module';
+import { MercadoPagoModule } from './mercado_pago/mercado_pago.module';
 
 
 @Module({
@@ -28,7 +29,8 @@ import { AddressModule } from './address/address.module';
     RolesModule,
     CategoriesModule,
     ProductsModule,
-    AddressModule
+    AddressModule,
+    MercadoPagoModule
   ],
   controllers: [AppController],
   providers: [AppService],
