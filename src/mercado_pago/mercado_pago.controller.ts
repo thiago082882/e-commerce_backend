@@ -39,5 +39,10 @@ export class MercadoPagoController {
         return this.mercadoPagoService.createCardToken(cardTokenBody);
     }
     
-
+    @HasRoles(JwtRole.ADMIN, JwtRole.CLIENT)
+    @UseGuards(JwtAuthGuard, JwtRolesGuard)
+    @Post('payments')
+    createPayment(@Body() paymentBody: PaymentBody) {
+        return this.mercadoPagoService.createPayment(paymentBody);
+    }
 }
