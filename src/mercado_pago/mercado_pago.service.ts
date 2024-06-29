@@ -42,7 +42,7 @@ export class MercadoPagoService {
     }
     createCardToken(cardTokenBody: CardTokenBody): Observable<CardTokenResponse> {
         return this.httpService.post(
-            MERCADO_PAGO_API + `/card_tokens?public_key=TEST-8568eec6-7fc0-48dc-b15a-d6a9278057e1`,
+            MERCADO_PAGO_API + `/card_tokens?public_key=TEST-64984bb0-de5a-4980-b173-356db846cc14`,
             cardTokenBody, 
             { headers: MERCADO_PAGO_HEADERS }
         ).pipe(
@@ -51,6 +51,31 @@ export class MercadoPagoService {
             })
         ).pipe(map((resp: AxiosResponse<CardTokenResponse>) => resp.data));
     }
-    
+    async createPayment(paymentBody: PaymentBody): Promise<Observable<PaymentResponse>> {
+        
+        const newOrder = this.ordersRepository.create(paymentBody.order);
+        const savedOrder = await this.ordersRepository.save(newOrder);
+
+        for (const product of paymentBody.order.products) {
+            const ohp = new OrderHasProducts();
+            ohp.id_order = savedOrder.id;
+            ohp.id_product = product.id;
+            ohp.quantity = product.quantity;
+            await this.ordersHasProductsRepository.save(ohp);
+        }
+        
+        delete paymentBody.order;
+
+        return this.httpService.post(
+            MERCADO_PAGO_API + '/payments',
+            paymentBody, 
+            { headers: MERCADO_PAGO_HEADERS }
+        ).pipe(
+            catchError((error: AxiosError) => {
+                throw new HttpException(error.response.data, error.response.status);
+            })
+        ).pipe(map((resp: AxiosResponse<PaymentResponse>) => resp.data));
+    }
+
 
 }
