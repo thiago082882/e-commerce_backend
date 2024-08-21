@@ -14,6 +14,7 @@ import { Repository } from 'typeorm';
 import { Order } from 'src/orders/order.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OrderHasProducts } from '../orders/order_has_products.entity';
+import { v4 as uuidv4 } from 'uuid'; 
 @Injectable()
 export class MercadoPagoService {
 
@@ -51,7 +52,7 @@ export class MercadoPagoService {
             })
         ).pipe(map((resp: AxiosResponse<CardTokenResponse>) => resp.data));
     }
-    async createPayment(paymentBody: PaymentBody): Promise<Observable<PaymentResponse>> {
+   /* async createPayment(paymentBody: PaymentBody): Promise<Observable<PaymentResponse>> {
         
         const newOrder = this.ordersRepository.create(paymentBody.order);
         const savedOrder = await this.ordersRepository.save(newOrder);
@@ -76,6 +77,39 @@ export class MercadoPagoService {
             })
         ).pipe(map((resp: AxiosResponse<PaymentResponse>) => resp.data));
     }
+*/
+async createPayment(idempotencyKey?: string, paymentBody?: PaymentBody): Promise<Observable<PaymentResponse>> {
+    const newOrder = this.ordersRepository.create(paymentBody.order);
+    const savedOrder = await this.ordersRepository.save(newOrder);
 
+    for (const product of paymentBody.order.products) {
+        const ohp = new OrderHasProducts();
+        ohp.id_order = savedOrder.id;
+        ohp.id_product = product.id;
+        ohp.quantity = product.quantity;
+        await this.ordersHasProductsRepository.save(ohp);
+    }
+
+    delete paymentBody.order;
+
+    // Gera o UUID v4 se idempotencyKey não for fornecido
+    const finalIdempotencyKey = idempotencyKey || uuidv4();
+
+    const headers = {
+        ...MERCADO_PAGO_HEADERS,
+        'X-Idempotency-Key': finalIdempotencyKey // Adiciona o cabeçalho com UUID
+    };
+
+    return this.httpService.post(
+        `${MERCADO_PAGO_API}/payments`,
+        paymentBody, 
+        { headers }
+    ).pipe(
+        catchError((error: AxiosError) => {
+            throw new HttpException(error.response?.data, error.response?.status);
+        }),
+        map((resp: AxiosResponse<PaymentResponse>) => resp.data)
+    );
+}
 
 }
