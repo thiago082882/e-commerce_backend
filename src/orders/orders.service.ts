@@ -22,9 +22,9 @@ export class OrdersService {
     async updateStatus(id: number) {
         const orderFound = await this.ordersRepository.findOneBy({id: id});
         if (!orderFound) {
-            throw new HttpException('Orden no encontrada', HttpStatus.NOT_FOUND);
+            throw new HttpException('Pedido não encontrado', HttpStatus.NOT_FOUND);
         }
-        const updatedOrder = Object.assign(orderFound, { status: 'DESPACHADO' });
+        const updatedOrder = Object.assign(orderFound, { status: 'ENVIADO' });
         return this.ordersRepository.save(updatedOrder);
     }
 

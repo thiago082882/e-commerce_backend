@@ -16,7 +16,7 @@ export class Order {
     @Column()
     id_address: number;
 
-    @Column({default: 'PAGADO'})
+    @Column({default: 'PAGO'})
     status: string;
 
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
