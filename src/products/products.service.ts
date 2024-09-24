@@ -3,11 +3,11 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './product.entity';
 import { Repository } from 'typeorm/repository/Repository';
-import { Multer } from 'multer';
 import { CreateProductDto } from './dto/create-product.dto';
 import asyncForEach = require('../utils/async_foreach');
 import  storage  =  require('../utils/cloud_storage');
-import { runInThisContext } from 'vm';
+import { Like } from 'typeorm';
+import { IPaginationOptions, Pagination,paginate} from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class ProductsService {
@@ -23,14 +23,15 @@ export class ProductsService {
         return this.productsRepository.findBy({ id_category: id_category });
     }
 
-    /*async paginate(options: IPaginationOptions): Promise<Pagination<Product>> {
+    async paginate(options: IPaginationOptions): Promise<Pagination<Product>> {
         return paginate<Product>(this.productsRepository, options);
     }
+  
 
     findByName(name: string) {
         return this.productsRepository.find({ where : { name: Like(`%${name}%`) }})
     }
-    */
+    
 
     async create(files :Array<Express.Multer.File>,product:CreateProductDto){
         console.log('Files' + files.length);

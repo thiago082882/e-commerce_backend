@@ -76,10 +76,10 @@ export class AuthService {
         
         const isPasswordValid = await compare(password, userFound.password);
         if (!isPasswordValid) {
-            console.log('Senha incorreta');
+            console.log('PASSWORD INCORRETO');
             
             // 403 FORBITTEN access denied
-            throw new HttpException('senha é incorreta', HttpStatus.FORBIDDEN);
+            throw new HttpException('A senha está incorreta', HttpStatus.FORBIDDEN);
         }
 
         const rolesIds = userFound.roles.map(rol => rol.id); //['CLIENT', 'ADMIN']

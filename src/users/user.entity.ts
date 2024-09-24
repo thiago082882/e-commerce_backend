@@ -25,7 +25,7 @@ export class User {
         @Column({nullable:true})
         image : string;
 
-        @Column({select:false})
+        @Column({select:true})
         password: string;
 
         @Column({nullable:true})
@@ -58,9 +58,12 @@ export class User {
 
         //Criptogrsfia de senha 
         @BeforeInsert()
-        async hashPassword(){
-            this.password = await hash(this.password,Number(process.env.HASH_SALT));
+        async hashPassword() {
+            console.log('Plain Password:', this.password);  // Print the plain password before hashing
+            this.password = await hash(this.password, Number(process.env.HASH_SALT));
+            console.log('Hashed Password:', this.password);  // Print the hashed password
         }
+        
     
 }
 
